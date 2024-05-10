@@ -66,7 +66,7 @@ export const Signup = () => {
                 }
             });
 
-            // console.log(response);
+            console.log(response);
 
             console.log(response.message);
 

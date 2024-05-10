@@ -71,6 +71,8 @@ export const Signup = () => {
             console.log(response.message);
 
             if(response.message) toast.success(response.message);
+            else toast.error("Something went wrong");
+            
             if(response.path) navigate(response.path);
 
             setLoading(false);

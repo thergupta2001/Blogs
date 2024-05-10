@@ -19,7 +19,7 @@ const limiter = rateLimit({
     statusCode: 429
 })
 
-app.use(limiter);
+// app.use(limiter);
 app.use(express.json());
 app.use(cors());
 app.use(cookieParser());

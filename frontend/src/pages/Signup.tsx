@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useRecoilState } from "recoil";
 import { loadingAtom } from "../store";
 import toast from "react-hot-toast";
-import { Loading } from "./Loading";
+import Loading from "./Loading.tsx";
 import fetchData, { Method } from "../helpers/fetchData";
 
 interface fetchResponse {
@@ -25,40 +25,12 @@ export const Signup = () => {
     async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
 
-        // try {
-        //     setLoading(true);
-
-        //     const link: string = import.meta.env.VITE_LINK + "/auth/signup";
-        //     const response: AxiosResponse = await axios.post(link, {
-        //         username: username,
-        //         email: email,
-        //         password: password
-        //     })
-
-        //     toast.success(response.data.message);
-
-        //     if (response.data.path) {
-        //         navigate("/", { replace: true });
-        //     }
-
-        //     setLoading(false);
-        // } catch (err) {
-        //     console.error(err);
-
-        //     if(axios.isAxiosError(err)) {
-        //         const axiosErr = err as AxiosError;
-        //         if(axiosErr.response?.data?.message) toast.error(axiosErr.response.data.message);
-        //     }
-
-        //     setLoading(false);
-        // }
-
         try {
             setLoading(true);
 
             const response: fetchResponse = await fetchData({
                 method: Method.POST,
-                url: "http://localhost:8000" + "/auth/signup",
+                url: import.meta.env.VITE_LINK + "/auth/signup",
                 body: {
                     username: username,
                     email: email,
@@ -66,9 +38,9 @@ export const Signup = () => {
                 }
             });
 
-            console.log(response);
+            // console.log(response);
 
-            console.log(response.message);
+            // console.log(response.message);
 
             if(response.message) toast.success(response.message);
             else toast.error("Something went wrong");

@@ -15,11 +15,11 @@ const app = (0, express_1.default)();
 const prisma = new client_1.PrismaClient();
 const limiter = (0, express_rate_limit_1.default)({
     windowMs: 15 * 60 * 1000,
-    max: 5,
+    max: 100,
     message: "Too many requests from this IP, please try again later",
     statusCode: 429
 });
-app.use(limiter);
+// app.use(limiter);
 app.use(express_1.default.json());
 app.use((0, cors_1.default)());
 app.use((0, cookie_parser_1.default)());

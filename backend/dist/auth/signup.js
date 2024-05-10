@@ -56,7 +56,7 @@ function SignupController(req, res) {
                     return res.status(409).json({
                         message: "You already have an account! Please login.",
                         success: false,
-                        path: "/login"
+                        path: "/"
                     });
                 }
             }
@@ -72,7 +72,7 @@ function SignupController(req, res) {
             return res.status(200).json({
                 message: "User created successfully",
                 success: true,
-                path: "/login"
+                path: "/"
             });
         }
         catch (error) {

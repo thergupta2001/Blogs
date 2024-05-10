@@ -58,7 +58,7 @@ export const Signup = () => {
 
             const response: fetchResponse = await fetchData({
                 method: Method.POST,
-                url: import.meta.env.VITE_LINK + "/auth/signup",
+                url: "http://localhost:8000" + "/auth/signup",
                 body: {
                     username: username,
                     email: email,
@@ -72,7 +72,7 @@ export const Signup = () => {
 
             if(response.message) toast.success(response.message);
             else toast.error("Something went wrong");
-            
+
             if(response.path) navigate(response.path);
 
             setLoading(false);

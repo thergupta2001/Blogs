@@ -1,15 +1,87 @@
 import { useState } from "react"
 import { InputField } from "../components/InputField"
+import { useNavigate } from "react-router-dom";
+import { useRecoilState } from "recoil";
+import { loadingAtom } from "../store";
+import toast from "react-hot-toast";
+import { Loading } from "./Loading";
+import fetchData, { Method } from "../helpers/fetchData";
+
+interface fetchResponse {
+    message: string;
+    success?: string;
+    path?: string;
+}
 
 export const Signup = () => {
+    const navigate = useNavigate();
+    // const name: string | null = useRecoilValue(usernameAtom);
+    const [loading, setLoading] = useRecoilState<boolean>(loadingAtom);
+
     const [username, setUsername] = useState<string>("");
     const [email, setEmail] = useState<string>("");
     const [password, setPassword] = useState<string>("");
 
-    async function handleSubmit (e: React.FormEvent<HTMLFormElement>) {
+    async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
-        console.log(username, email, password);
+
+        // try {
+        //     setLoading(true);
+
+        //     const link: string = import.meta.env.VITE_LINK + "/auth/signup";
+        //     const response: AxiosResponse = await axios.post(link, {
+        //         username: username,
+        //         email: email,
+        //         password: password
+        //     })
+
+        //     toast.success(response.data.message);
+
+        //     if (response.data.path) {
+        //         navigate("/", { replace: true });
+        //     }
+
+        //     setLoading(false);
+        // } catch (err) {
+        //     console.error(err);
+
+        //     if(axios.isAxiosError(err)) {
+        //         const axiosErr = err as AxiosError;
+        //         if(axiosErr.response?.data?.message) toast.error(axiosErr.response.data.message);
+        //     }
+
+        //     setLoading(false);
+        // }
+
+        try {
+            setLoading(true);
+
+            const response: fetchResponse = await fetchData({
+                method: Method.POST,
+                url: import.meta.env.VITE_LINK + "/auth/signup",
+                body: {
+                    username: username,
+                    email: email,
+                    password: password
+                }
+            });
+
+            // console.log(response);
+
+            console.log(response.message);
+
+            if(response.message) toast.success(response.message);
+            if(response.path) navigate(response.path);
+
+            setLoading(false);
+        } catch (error) {
+            console.log(error)
+
+            setLoading(false)
+        }
     }
+
+    if(loading) return <Loading />
 
     return (
         <>
@@ -48,9 +120,9 @@ export const Signup = () => {
                     </p>
 
                     <p className="text-center text-sm text-gray-500">
-                        Not a member?{' '}
-                        <a href="#" className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500">
-                            Start a 14 day free trial
+                        Already have an account?{' '}
+                        <a onClick={() => { navigate("/") }} className="cursor-pointer font-semibold leading-6 text-indigo-600 hover:text-indigo-500">
+                            Click here
                         </a>
                     </p>
                 </div>

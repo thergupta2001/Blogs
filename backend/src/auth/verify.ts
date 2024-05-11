@@ -58,7 +58,7 @@ export default async function userVerification(req: Request, res: Response) {
                 success: true,
                 path: "/home"
             });
-        } else {
+        } else if(user && user.otp !== userVerify.otp) {
             return res.status(400).json({
                 message: "Invalid OTP",
                 success: false,

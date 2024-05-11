@@ -20,3 +20,10 @@ model User {
   password   String
   isVerified Boolean @default(false)
 }
+
+model otps {
+  id          Int       @id @default(autoincrement())
+  email       String
+  otp         String
+  expiration  DateTime
+}

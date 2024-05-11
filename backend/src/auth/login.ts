@@ -2,6 +2,8 @@ import { PrismaClient } from "@prisma/client";
 import { Request, Response } from "express";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import sendOTPByMail from "../utils/sendOTP";
+import generateOTP from "../utils/generateOTP";
 
 interface User {
     email: string;
@@ -11,55 +13,60 @@ interface User {
 
 const prisma = new PrismaClient();
 
-export default async function LoginController (req: Request, res: Response) {
-    const user: User = req.body;
+export default async function LoginController(req: Request, res: Response) {
+    try {
+        const user: User = req.body;
 
-    if (!user.email || !user.password) {
-        return res.json({
-            message: "Please provide all the credentials!",
-            success: false,
-            path: null
-        })
-    }
-
-    const existingUser: User | null = await prisma.user.findUnique({
-        where: {
-            email: user.email
+        if (!user.email || !user.password) {
+            return res.json({
+                message: "Please provide all the credentials!",
+                success: false,
+                path: null
+            })
         }
-    })
 
-    if(!existingUser) {
-        return res.status(404).json({
-            message: "User not found! Please register",
-            success: false,
-            path: "/signup"
+        // Checks if the user exists
+        const existingUser: User | null = await prisma.user.findUnique({
+            where: {
+                email: user.email
+            }
         })
-    }
 
-    // Checks for valid credentials
-    const matchedPassword: boolean = await bcrypt.compare(user.password, existingUser.password);
+        if (!existingUser) {
+            return res.status(404).json({
+                message: "User not found! Please register",
+                success: false,
+                path: "/signup"
+            })
+        }
 
-    if(!matchedPassword) {
-        return res.status(401).json({
-            message: "Invalid credentials",
+        // Checks for valid credentials
+        const matchedPassword: boolean = await bcrypt.compare(user.password, existingUser.password);
+
+        if (!matchedPassword) {
+            return res.status(401).json({
+                message: "Invalid credentials",
+                success: false,
+                path: null
+            })
+        }
+
+        // Sends otp to the user
+        const otp = generateOTP();
+
+        await sendOTPByMail(user.email, otp);
+
+        return res.status(200).json({
+            message: "An OTP has been sent to your email",
+            success: true,
+            path: "/verify"
+        })
+    } catch (error: unknown) {
+        console.log(error);
+        return res.status(500).json({
+            message: "Internal server error. Please try again later",
             success: false,
             path: null
         })
     }
-
-    // Checks for valid otp
-    
-
-    const payload = {
-        username: existingUser.username,
-        email: existingUser.email
-    }
-
-    const secret: string | null = process.env.JWT_SECRET!.toString();
-
-    const token = jwt.sign(payload, secret, { expiresIn: '3d' });
-
-    res.cookie("accessToken", token, {
-        expires: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000) // cookie expiry in 3 days
-    })
 }

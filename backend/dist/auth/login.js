@@ -14,49 +14,59 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const client_1 = require("@prisma/client");
 const bcrypt_1 = __importDefault(require("bcrypt"));
-const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
+const sendOTP_1 = __importDefault(require("../utils/sendOTP"));
+const generateOTP_1 = __importDefault(require("../utils/generateOTP"));
 const prisma = new client_1.PrismaClient();
 function LoginController(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
-        const user = req.body;
-        if (!user.email || !user.password) {
-            return res.json({
-                message: "Please provide all the credentials!",
-                success: false,
-                path: null
-            });
-        }
-        const existingUser = yield prisma.user.findUnique({
-            where: {
-                email: user.email
+        try {
+            const user = req.body;
+            if (!user.email || !user.password) {
+                return res.json({
+                    message: "Please provide all the credentials!",
+                    success: false,
+                    path: null
+                });
             }
-        });
-        if (!existingUser) {
-            return res.status(404).json({
-                message: "User not found! Please register",
-                success: false,
-                path: "/signup"
+            // Checks if the user exists
+            const existingUser = yield prisma.user.findUnique({
+                where: {
+                    email: user.email
+                }
+            });
+            if (!existingUser) {
+                return res.status(404).json({
+                    message: "User not found! Please register",
+                    success: false,
+                    path: "/signup"
+                });
+            }
+            // Checks for valid credentials
+            const matchedPassword = yield bcrypt_1.default.compare(user.password, existingUser.password);
+            if (!matchedPassword) {
+                return res.status(401).json({
+                    message: "Invalid credentials",
+                    success: false,
+                    path: null
+                });
+            }
+            // Sends otp to the user
+            const otp = (0, generateOTP_1.default)();
+            yield (0, sendOTP_1.default)(user.email, otp);
+            return res.status(200).json({
+                message: "An OTP has been sent to your email",
+                success: true,
+                path: "/verify"
             });
         }
-        // Checks for valid credentials
-        const matchedPassword = yield bcrypt_1.default.compare(user.password, existingUser.password);
-        if (!matchedPassword) {
-            return res.status(401).json({
-                message: "Invalid credentials",
+        catch (error) {
+            console.log(error);
+            return res.status(500).json({
+                message: "Internal server error. Please try again later",
                 success: false,
                 path: null
             });
         }
-        // Checks for valid otp
-        const payload = {
-            username: existingUser.username,
-            email: existingUser.email
-        };
-        const secret = process.env.JWT_SECRET.toString();
-        const token = jsonwebtoken_1.default.sign(payload, secret, { expiresIn: '3d' });
-        res.cookie("accessToken", token, {
-            expires: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000) // cookie expiry in 3 days
-        });
     });
 }
 exports.default = LoginController;

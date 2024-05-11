@@ -1,6 +1,9 @@
 import nodemailer from "nodemailer";
+import { PrismaClient } from "@prisma/client";
 
-export default async function sendOTPByMail(email: string, OTP: string) {
+const prisma = new PrismaClient();
+
+export default async function sendOTPByMail(email: string, otp: string) {
     const transporter = nodemailer.createTransport({
         service: 'gmail',
         auth: {
@@ -13,13 +16,33 @@ export default async function sendOTPByMail(email: string, OTP: string) {
         from: process.env.ADMIN_EMAIL,
         to: email,
         subject: 'OTP for Signup',
-        text: `Your OTP for signup is: ${OTP}`
+        text: `Your OTP for signup is: ${otp}`
     };
 
     try {
         await transporter.sendMail(mailOptions);
+
+        console.log("Hello");
+
+        // Creates an otp model here
+        await prisma.otps.create({
+            data: {
+                email: email,
+                otp: otp,
+                expiration: new Date(Date.now() + 5 * 60 * 1000)
+            }
+        });
+
+        return;
     } catch (error: unknown) {
+        const response = {
+            message: "Error sending OTP, please try again later.",
+            success: false,
+            path: null
+        }
+
         console.error('Error sending OTP email:', error);
-        throw new Error('Failed to send OTP email');
+
+        return response;
     }
 }

@@ -32,7 +32,11 @@ function sendOTPByMail(email, otp) {
         };
         try {
             yield transporter.sendMail(mailOptions);
-            console.log("Hello");
+            yield prisma.otps.deleteMany({
+                where: {
+                    email: email
+                }
+            });
             // Creates an otp model here
             yield prisma.otps.create({
                 data: {

@@ -21,7 +21,7 @@ model User {
   isVerified Boolean @default(false)
 }
 
-model otps {
+model Otps {
   id          Int       @id @default(autoincrement())
   email       String
   otp         String

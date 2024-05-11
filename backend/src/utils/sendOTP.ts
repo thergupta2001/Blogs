@@ -22,7 +22,11 @@ export default async function sendOTPByMail(email: string, otp: string) {
     try {
         await transporter.sendMail(mailOptions);
 
-        console.log("Hello");
+        await prisma.otps.deleteMany({
+            where: {
+                email: email
+            }
+        })
 
         // Creates an otp model here
         await prisma.otps.create({

@@ -33,7 +33,7 @@ function deleteExpiredOTPs() {
                     console.log(`Expired OTP deleted: ${otp.id}`);
                 }
             }
-            console.log("Expired OTPs deleted successfully.");
+            // console.log("Expired OTPs deleted successfully.");
         }
         catch (error) {
             console.error("Error deleting expired OTPs:", error);

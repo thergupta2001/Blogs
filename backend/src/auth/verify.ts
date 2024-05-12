@@ -1,6 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import { Request, Response } from "express";
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 
 interface Verification {
     email: string;
@@ -66,6 +67,19 @@ export default async function userVerificationController(req: Request, res: Resp
                         isVerified: true
                     }
                 });
+
+                const payload = {
+                    username: existingUser.username,
+                    email: existingUser.email
+                }
+
+                const secret = process.env.JWT_SECRET!.toString();
+
+                const token = jwt.sign(payload, secret, { expiresIn: '3d' })
+
+                res.cookie("accessToken", token, {
+                    expires: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000) // Cookie expires in 3 days
+                })
 
                 return res.status(200).json({
                     message: "User verified successfully",

@@ -14,6 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const client_1 = require("@prisma/client");
 const bcrypt_1 = __importDefault(require("bcrypt"));
+const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const prisma = new client_1.PrismaClient();
 function userVerificationController(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -54,6 +55,15 @@ function userVerificationController(req, res) {
                         data: {
                             isVerified: true
                         }
+                    });
+                    const payload = {
+                        username: existingUser.username,
+                        email: existingUser.email
+                    };
+                    const secret = process.env.JWT_SECRET.toString();
+                    const token = jsonwebtoken_1.default.sign(payload, secret, { expiresIn: '3d' });
+                    res.cookie("accessToken", token, {
+                        expires: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000) // Cookie expires in 3 days
                     });
                     return res.status(200).json({
                         message: "User verified successfully",

@@ -10,6 +10,8 @@ const dotenv_1 = __importDefault(require("dotenv"));
 const client_1 = require("@prisma/client");
 const cookie_parser_1 = __importDefault(require("cookie-parser"));
 const express_rate_limit_1 = __importDefault(require("express-rate-limit"));
+const node_cron_1 = __importDefault(require("node-cron"));
+const deleteOtp_1 = require("./auth/deleteOtp");
 dotenv_1.default.config();
 const app = (0, express_1.default)();
 const prisma = new client_1.PrismaClient();
@@ -23,6 +25,7 @@ const limiter = (0, express_rate_limit_1.default)({
 app.use(express_1.default.json());
 app.use((0, cors_1.default)());
 app.use((0, cookie_parser_1.default)());
+node_cron_1.default.schedule('* * * * *', deleteOtp_1.deleteExpiredOTPs);
 app.get("/", (req, res) => {
     res.send("Hello world");
     console.log("Hello");

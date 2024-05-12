@@ -8,10 +8,14 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const client_1 = require("@prisma/client");
+const bcrypt_1 = __importDefault(require("bcrypt"));
 const prisma = new client_1.PrismaClient();
-function userVerification(req, res) {
+function userVerificationController(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         const userVerify = req.body;
         try {
@@ -33,25 +37,37 @@ function userVerification(req, res) {
                     path: null
                 });
             }
-            if (user && user.otp === userVerify.otp) {
-                // Delete the prisma otp document
-                yield prisma.otps.deleteMany({
-                    where: {
-                        email: userVerify.email
-                    }
-                });
-                return res.status(200).json({
-                    message: "User verified successfully",
-                    success: true,
-                    path: "/home"
-                });
-            }
-            else {
-                return res.status(400).json({
-                    message: "Invalid OTP",
-                    success: false,
-                    path: null
-                });
+            if (user) {
+                const matchedOtp = yield bcrypt_1.default.compare(userVerify.otp, user.otp);
+                if (matchedOtp) {
+                    // Delete the prisma otp document
+                    yield prisma.otps.deleteMany({
+                        where: {
+                            email: userVerify.email
+                        }
+                    });
+                    // Update user's isVerified flag to true
+                    yield prisma.user.update({
+                        where: {
+                            email: existingUser.email
+                        },
+                        data: {
+                            isVerified: true
+                        }
+                    });
+                    return res.status(200).json({
+                        message: "User verified successfully",
+                        success: true,
+                        path: "/home"
+                    });
+                }
+                else {
+                    return res.status(400).json({
+                        message: "Invalid OTP",
+                        success: false,
+                        path: null
+                    });
+                }
             }
         }
         catch (error) {
@@ -64,4 +80,4 @@ function userVerification(req, res) {
         }
     });
 }
-exports.default = userVerification;
+exports.default = userVerificationController;

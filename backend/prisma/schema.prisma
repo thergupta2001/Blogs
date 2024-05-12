@@ -25,5 +25,5 @@ model Otps {
   id          Int       @id @default(autoincrement())
   email       String
   otp         String
-  expiration  DateTime
+  expiration  String
 }

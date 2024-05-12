@@ -14,6 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const nodemailer_1 = __importDefault(require("nodemailer"));
 const client_1 = require("@prisma/client");
+const bcrypt_1 = __importDefault(require("bcrypt"));
 const prisma = new client_1.PrismaClient();
 function sendOTPByMail(email, otp) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -28,9 +29,10 @@ function sendOTPByMail(email, otp) {
             from: process.env.ADMIN_EMAIL,
             to: email,
             subject: 'OTP for Signup',
-            text: `Your OTP for signup is: ${otp}`
+            text: `Your OTP for signup is: ${otp}. This OTP expires in 5 minutes.`
         };
         try {
+            const hashedOtp = (yield bcrypt_1.default.hash(otp, 10)).toString();
             yield transporter.sendMail(mailOptions);
             yield prisma.otps.deleteMany({
                 where: {
@@ -38,11 +40,12 @@ function sendOTPByMail(email, otp) {
                 }
             });
             // Creates an otp model here
+            const deviceTimeAsString = new Date().toISOString();
             yield prisma.otps.create({
                 data: {
                     email: email,
-                    otp: otp,
-                    expiration: new Date(Date.now() + 5 * 60 * 1000)
+                    otp: hashedOtp,
+                    expiration: deviceTimeAsString
                 }
             });
             return;

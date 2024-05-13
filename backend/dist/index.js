@@ -12,13 +12,14 @@ const cookie_parser_1 = __importDefault(require("cookie-parser"));
 const express_rate_limit_1 = __importDefault(require("express-rate-limit"));
 const node_cron_1 = __importDefault(require("node-cron"));
 const deleteOtp_1 = require("./auth/deleteOtp");
+const router_2 = __importDefault(require("./user/router"));
 dotenv_1.default.config();
 const app = (0, express_1.default)();
 const prisma = new client_1.PrismaClient();
 const limiter = (0, express_rate_limit_1.default)({
     windowMs: 15 * 60 * 1000,
     max: 100,
-    message: "Too many requests from this IP, please try again later",
+    message: "Too many requests from this IP, please try again later.",
     statusCode: 429
 });
 // app.use(limiter);
@@ -31,6 +32,7 @@ app.get("/", (req, res) => {
     console.log("Hello");
 });
 app.use("/auth", router_1.default);
+app.use("/user", router_2.default);
 app.listen(process.env.PORT, () => {
     console.log(`Server on port ${process.env.PORT}`);
 });

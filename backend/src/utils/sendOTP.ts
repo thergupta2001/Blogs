@@ -25,6 +25,7 @@ export default async function sendOTPByMail(email: string, otp: string) {
 
         await transporter.sendMail(mailOptions);
 
+        // Deletes any previous OTPs of the user
         await prisma.otps.deleteMany({
             where: {
                 email: email

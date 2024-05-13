@@ -7,6 +7,7 @@ import cookieParser from "cookie-parser";
 import rateLimit from "express-rate-limit";
 import cron from "node-cron";
 import { deleteExpiredOTPs } from "./auth/deleteOtp";
+import userRouter from "./user/router";
 
 dotenv.config();
 
@@ -17,7 +18,7 @@ const prisma = new PrismaClient();
 const limiter = rateLimit({
     windowMs: 15 * 60 * 1000,
     max: 100,
-    message: "Too many requests from this IP, please try again later",
+    message: "Too many requests from this IP, please try again later.",
     statusCode: 429
 })
 
@@ -34,6 +35,7 @@ app.get("/", (req: Request, res: Response) => {
 })
 
 app.use("/auth", authRouter);
+app.use("/user", userRouter);
 
 app.listen(process.env.PORT, () => {
     console.log(`Server on port ${process.env.PORT}`);

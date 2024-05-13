@@ -34,6 +34,7 @@ function sendOTPByMail(email, otp) {
         try {
             const hashedOtp = (yield bcrypt_1.default.hash(otp, 10)).toString();
             yield transporter.sendMail(mailOptions);
+            // Deletes any previous OTPs of the user
             yield prisma.otps.deleteMany({
                 where: {
                     email: email

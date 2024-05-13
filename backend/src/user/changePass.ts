@@ -1,17 +1,11 @@
-import { PrismaClient } from "@prisma/client";
 import { Request, Response } from "express";
+import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
 
-interface Verification {
+interface ChangePassword {
     email: string;
     otp: string;
-}
-
-interface OTP {
-    id?: number;
-    email: string;
-    otp: string;
+    password: string
 }
 
 interface User {
@@ -20,22 +14,22 @@ interface User {
     password: string
 }
 
+interface OTP {
+    id?: number;
+    email: string;
+    otp: string;
+}
+
 const prisma = new PrismaClient();
 
-export default async function userVerificationController(req: Request, res: Response) {
-    const userVerify: Verification = req.body;
+export default async function changePassController(req: Request, res: Response) {
+    const userChangePass: ChangePassword = req.body;
 
     try {
-        const user: OTP | null = await prisma.otps.findFirst({
-            where: {
-                email: userVerify.email
-            }
-        });
-
-        // Ensures only existing users receive OTP
+        // Checks if the user exists
         const existingUser: User | null = await prisma.user.findUnique({
             where: {
-                email: userVerify.email
+                email: userChangePass?.email
             }
         });
 
@@ -47,16 +41,25 @@ export default async function userVerificationController(req: Request, res: Resp
             })
         }
 
-        if (user) {
-            const matchedOtp = await bcrypt.compare(userVerify.otp, user.otp);
+        // Checks OTP verification
+        const userOTP: OTP | null = await prisma.otps.findFirst({
+            where: {
+                email: userChangePass.email
+            }
+        });
+
+        if (userOTP) {
+            const matchedOtp = await bcrypt.compare(userChangePass.otp, userOTP.otp);
 
             if (matchedOtp) {
                 // Delete the prisma otp document
                 await prisma.otps.deleteMany({
                     where: {
-                        email: userVerify.email
+                        email: userChangePass.email
                     }
                 })
+
+                const newHashedPassword = await bcrypt.hash(userChangePass.password, 10);
 
                 // Update user's isVerified flag to true
                 await prisma.user.update({
@@ -64,27 +67,15 @@ export default async function userVerificationController(req: Request, res: Resp
                         email: existingUser.email
                     },
                     data: {
-                        isVerified: true
+                        password: newHashedPassword,
+                        isVerified: true,
                     }
                 });
 
-                const payload = {
-                    username: existingUser.username,
-                    email: existingUser.email
-                }
-
-                const secret = process.env.JWT_SECRET!.toString();
-
-                const token = jwt.sign(payload, secret, { expiresIn: '3d' })
-
-                res.cookie("accessToken", token, {
-                    expires: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000) // Cookie expires in 3 days
-                })
-
                 return res.status(200).json({
-                    message: "User verified successfully",
+                    message: "Password changed successfully",
                     success: true,
-                    path: "/home"
+                    path: "/"
                 });
             } else {
                 return res.status(400).json({
@@ -96,6 +87,7 @@ export default async function userVerificationController(req: Request, res: Resp
         }
     } catch (error) {
         console.error(error);
+
         return res.status(500).json({
             message: "Internal server error",
             success: false,

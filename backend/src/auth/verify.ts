@@ -47,53 +47,61 @@ export default async function userVerificationController(req: Request, res: Resp
             })
         }
 
-        if (user) {
-            const matchedOtp = await bcrypt.compare(userVerify.otp, user.otp);
-
-            if (matchedOtp) {
-                // Delete the prisma otp document
-                await prisma.otps.deleteMany({
-                    where: {
-                        email: userVerify.email
-                    }
-                })
-
-                // Update user's isVerified flag to true
-                await prisma.user.update({
-                    where: {
-                        email: existingUser.email
-                    },
-                    data: {
-                        isVerified: true
-                    }
-                });
-
-                const payload = {
-                    username: existingUser.username,
-                    email: existingUser.email
-                }
-
-                const secret = process.env.JWT_SECRET!.toString();
-
-                const token = jwt.sign(payload, secret, { expiresIn: '3d' })
-
-                res.cookie("accessToken", token, {
-                    expires: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000) // Cookie expires in 3 days
-                })
-
-                return res.status(200).json({
-                    message: "User verified successfully",
-                    success: true,
-                    path: "/home"
-                });
-            } else {
-                return res.status(400).json({
-                    message: "Invalid OTP",
-                    success: false,
-                    path: null
-                })
-            }
+        if (!user) {
+            return res.status(500).json({
+                message: "Your OTP has already expired!",
+                success: false,
+                path: null
+            })
         }
+
+        // console.log("Hello")
+        const matchedOtp = await bcrypt.compare(userVerify.otp, user.otp);
+
+        if (matchedOtp) {
+            // Delete the prisma otp document
+            await prisma.otps.deleteMany({
+                where: {
+                    email: userVerify.email
+                }
+            })
+
+            // Update user's isVerified flag to true
+            await prisma.user.update({
+                where: {
+                    email: existingUser.email
+                },
+                data: {
+                    isVerified: true
+                }
+            });
+
+            const payload = {
+                username: existingUser.username,
+                email: existingUser.email
+            }
+
+            const secret = process.env.JWT_SECRET!.toString();
+
+            const token = jwt.sign(payload, secret, { expiresIn: '3d' })
+
+            res.cookie("accessToken", token, {
+                expires: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000) // Cookie expires in 3 days
+            })
+
+            return res.status(200).json({
+                message: "User verified successfully",
+                success: true,
+                path: "/home"
+            });
+        } else {
+            return res.status(400).json({
+                message: "Invalid OTP",
+                success: false,
+                path: null
+            })
+        }
+
     } catch (error) {
         console.error(error);
         return res.status(500).json({

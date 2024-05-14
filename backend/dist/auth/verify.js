@@ -38,46 +38,52 @@ function userVerificationController(req, res) {
                     path: null
                 });
             }
-            if (user) {
-                const matchedOtp = yield bcrypt_1.default.compare(userVerify.otp, user.otp);
-                if (matchedOtp) {
-                    // Delete the prisma otp document
-                    yield prisma.otps.deleteMany({
-                        where: {
-                            email: userVerify.email
-                        }
-                    });
-                    // Update user's isVerified flag to true
-                    yield prisma.user.update({
-                        where: {
-                            email: existingUser.email
-                        },
-                        data: {
-                            isVerified: true
-                        }
-                    });
-                    const payload = {
-                        username: existingUser.username,
+            if (!user) {
+                return res.status(500).json({
+                    message: "Your OTP has already expired!",
+                    success: false,
+                    path: null
+                });
+            }
+            console.log("Hello");
+            const matchedOtp = yield bcrypt_1.default.compare(userVerify.otp, user.otp);
+            if (matchedOtp) {
+                // Delete the prisma otp document
+                yield prisma.otps.deleteMany({
+                    where: {
+                        email: userVerify.email
+                    }
+                });
+                // Update user's isVerified flag to true
+                yield prisma.user.update({
+                    where: {
                         email: existingUser.email
-                    };
-                    const secret = process.env.JWT_SECRET.toString();
-                    const token = jsonwebtoken_1.default.sign(payload, secret, { expiresIn: '3d' });
-                    res.cookie("accessToken", token, {
-                        expires: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000) // Cookie expires in 3 days
-                    });
-                    return res.status(200).json({
-                        message: "User verified successfully",
-                        success: true,
-                        path: "/home"
-                    });
-                }
-                else {
-                    return res.status(400).json({
-                        message: "Invalid OTP",
-                        success: false,
-                        path: null
-                    });
-                }
+                    },
+                    data: {
+                        isVerified: true
+                    }
+                });
+                const payload = {
+                    username: existingUser.username,
+                    email: existingUser.email
+                };
+                const secret = process.env.JWT_SECRET.toString();
+                const token = jsonwebtoken_1.default.sign(payload, secret, { expiresIn: '3d' });
+                res.cookie("accessToken", token, {
+                    expires: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000) // Cookie expires in 3 days
+                });
+                return res.status(200).json({
+                    message: "User verified successfully",
+                    success: true,
+                    path: "/home"
+                });
+            }
+            else {
+                return res.status(400).json({
+                    message: "Invalid OTP",
+                    success: false,
+                    path: null
+                });
             }
         }
         catch (error) {

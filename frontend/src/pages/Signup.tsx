@@ -87,13 +87,7 @@ export const Signup = () => {
                         </div>
                     </form>
 
-                    <p className="mt-5 mb-4 text-center text-sm text-gray-500">
-                        <a href="#" className="text-sm mb-2 font-semibold text-indigo-600 hover:text-indigo-500">
-                            Forgot password?
-                        </a>
-                    </p>
-
-                    <p className="text-center text-sm text-gray-500">
+                    <p className="text-center text-sm text-gray-500 mt-5">
                         Already have an account?{' '}
                         <a onClick={() => { navigate("/") }} className="cursor-pointer font-semibold leading-6 text-indigo-600 hover:text-indigo-500">
                             Click here

@@ -1,6 +1,14 @@
 import { useNavigate } from "react-router-dom";
 import { InputField } from "../components/InputField"
 import { useState } from "react";
+import fetchData, { Method } from "../helpers/fetchData";
+import Loading from "./Loading";
+
+interface fetchResponse {
+  message: string;
+  success?: string;
+  path?: string;
+}
 
 export const Login = () => {
   const navigate = useNavigate();
@@ -8,11 +16,36 @@ export const Login = () => {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
 
+  const [loading, setLoading] = useState<boolean>(false);
+
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
-    console.log(email, password);
+    // console.log(email, password);
+
+    try {
+      setLoading(true);
+
+      const response: fetchResponse = await fetchData({
+        method: Method.POST,
+        url: import.meta.env.VITE_LINK + "/auth/login",
+        body: {
+          email: email,
+          password: password
+        }
+      });
+
+      console.log(response);
+
+      setLoading(false);
+    } catch (error) {
+      console.log(error)
+
+      setLoading(false)
+    }
   }
+
+  if(loading) return <Loading />
 
   return (
     <>

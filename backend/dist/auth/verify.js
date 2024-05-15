@@ -45,7 +45,7 @@ function userVerificationController(req, res) {
                     path: null
                 });
             }
-            console.log("Hello");
+            // console.log("Hello")
             const matchedOtp = yield bcrypt_1.default.compare(userVerify.otp, user.otp);
             if (matchedOtp) {
                 // Delete the prisma otp document

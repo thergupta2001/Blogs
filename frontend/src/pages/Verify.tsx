@@ -35,15 +35,6 @@ export const Verify = () => {
         try {
             setLoading(true);
 
-            // const response: fetchResponse = await fetchData({
-            //     method: Method.POST,
-            //     url: import.meta.env.VITE_LINK + "/auth/verify",
-            //     body: {
-            //         email: email,
-            //         otp: otp
-            //     }
-            // });
-
             const response = await axios({
                 method: "POST",
                 url: import.meta.env.VITE_LINK + "/auth/verify",

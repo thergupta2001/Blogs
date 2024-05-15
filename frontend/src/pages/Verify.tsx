@@ -2,15 +2,15 @@ import { useEffect, useState } from "react";
 import { InputField } from "../components/InputField";
 import toast from "react-hot-toast";
 import Loading from "./Loading";
-import fetchData, { Method } from "../helpers/fetchData";
+// import fetchData, { Method } from "../helpers/fetchData";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
-interface fetchResponse {
-    message: string;
-    success?: boolean;
-    path?: string;
-}
+// interface fetchResponse {
+//     message: string;
+//     success?: boolean;
+//     path?: string;
+// }
 
 export const Verify = () => {
     const navigate = useNavigate();

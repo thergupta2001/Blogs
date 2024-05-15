@@ -86,8 +86,11 @@ export default async function userVerificationController(req: Request, res: Resp
             const token = jwt.sign(payload, secret, { expiresIn: '3d' })
 
             res.cookie("accessToken", token, {
-                expires: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000) // Cookie expires in 3 days
+                expires: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000), // Cookie expires in 3 days
+                httpOnly: true
             })
+
+            // console.log(res.cookies.accessToken);
 
             return res.status(200).json({
                 message: "User verified successfully",

@@ -71,7 +71,9 @@ function userVerificationController(req, res) {
                 const token = jsonwebtoken_1.default.sign(payload, secret, { expiresIn: '3d' });
                 res.cookie("accessToken", token, {
                     expires: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000), // Cookie expires in 3 days
-                    httpOnly: true
+                    httpOnly: true,
+                    secure: true,
+                    sameSite: 'none'
                 });
                 // console.log(res.cookies.accessToken);
                 return res.status(200).json({

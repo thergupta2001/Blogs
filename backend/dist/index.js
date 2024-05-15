@@ -27,7 +27,7 @@ const limiter = (0, express_rate_limit_1.default)({
 app.use(express_1.default.json());
 app.use(express_1.default.urlencoded({ extended: false }));
 app.use((0, cors_1.default)({
-    origin: 'http://localhost:5173',
+    origin: "http://localhost:5173",
     credentials: true
 }));
 app.use((0, cookie_parser_1.default)());

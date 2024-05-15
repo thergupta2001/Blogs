@@ -3,10 +3,11 @@ import { InputField } from "../components/InputField"
 import { useState } from "react";
 import fetchData, { Method } from "../helpers/fetchData";
 import Loading from "./Loading";
+import toast from "react-hot-toast";
 
 interface fetchResponse {
   message: string;
-  success?: string;
+  success?: boolean;
   path?: string;
 }
 
@@ -35,17 +36,26 @@ export const Login = () => {
         }
       });
 
-      console.log(response);
+      // console.log(response);
+      // console.log(response.success)
 
+      if (response.success) toast.success(response.message);
+      else if(response.success === false) toast.error(response.message);
+      else toast.error("Something went wrong! Please try again later.")
+
+      if(response.success) localStorage.setItem("email", email);
+
+      if (response.path) navigate(response.path);
       setLoading(false);
     } catch (error) {
       console.log(error)
+      toast.error("Internal server error! Please try again later.")
 
       setLoading(false)
     }
   }
 
-  if(loading) return <Loading />
+  if (loading) return <Loading />
 
   return (
     <>

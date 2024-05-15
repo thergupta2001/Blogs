@@ -4,6 +4,7 @@ import toast from "react-hot-toast";
 import Loading from "./Loading";
 import fetchData, { Method } from "../helpers/fetchData";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 interface fetchResponse {
     message: string;
@@ -34,26 +35,35 @@ export const Verify = () => {
         try {
             setLoading(true);
 
-            const response: fetchResponse = await fetchData({
-                method: Method.POST,
+            // const response: fetchResponse = await fetchData({
+            //     method: Method.POST,
+            //     url: import.meta.env.VITE_LINK + "/auth/verify",
+            //     body: {
+            //         email: email,
+            //         otp: otp
+            //     }
+            // });
+
+            const response = await axios({
+                method: "POST",
                 url: import.meta.env.VITE_LINK + "/auth/verify",
-                body: {
+                data: {
                     email: email,
                     otp: otp
-                }
-            });
+                },
+                withCredentials: true
+            })
 
             // console.log(response);
 
-            if (response.success) {
-                toast.success(response.message);
+            if (response.data.success) {
+                toast.success(response.data.message);
                 localStorage.removeItem("email");
             }
-            else if (response.success === false) toast.error(response.message);
+            else if (response.data.success === false) toast.error(response.data.message);
             else toast.error("Something went wrong! Please try again later.")
 
-            if (response.path) navigate(response.path);
-
+            if (response.data.path) navigate(response.data.path);
 
             setLoading(false)
         } catch (error) {

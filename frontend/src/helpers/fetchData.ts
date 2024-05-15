@@ -36,7 +36,9 @@ export default async function fetchData(data: FetchDataProps) {
       url: data.url,
       data: data.body,
       params: data.params,
+      // withCredentials: true
     });
+    
     return response.data || "Something went wrong";
   } catch (err) {
     const error = err as AxiosErrorType;

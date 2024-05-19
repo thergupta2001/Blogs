@@ -1,50 +1,65 @@
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { InputField } from "../components/InputField"
-import { useState } from "react";
-import fetchData, { Method } from "../helpers/fetchData";
-import Loading from "./Loading";
+import { InputField } from "../components/InputField";
 import toast from "react-hot-toast";
+import fetchData, { Method } from "../helpers/fetchData";
+import { fetchResponse } from "./Login";
+import Loading from "./Loading";
 
-export interface fetchResponse {
-  message: string;
-  success?: boolean;
-  path?: string;
-}
-
-export const Login = () => {
+export const ChangePass = () => {
   const navigate = useNavigate();
 
-  const [email, setEmail] = useState<string>("");
+  const email: string | null = localStorage.getItem("email");
   const [password, setPassword] = useState<string>("");
+  const [checkPass, setCheckPass] = useState<string>("");
 
+  const [otp, setOtp] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      localStorage.removeItem('email');
+      alert("Your OTP has expired!")
+    }, 5 * 60 * 1000);
+
+    // Cleanup function to clear the timeout if the component unmounts before the timeout
+    return () => clearTimeout(timeout);
+  }, []);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
     try {
+      if(password !== checkPass) {
+        alert("Passwords do not match");
+        return;
+      }
+
       setLoading(true);
 
       const response: fetchResponse = await fetchData({
-        method: Method.POST,
-        url: import.meta.env.VITE_LINK + "/auth/login",
+        method: Method.PUT,
+        url: import.meta.env.VITE_LINK + "/user/change",
         body: {
           email: email,
+          otp: otp,
           password: password
         },
-      });
+      })
 
-      if (response.success) toast.success(response.message);
-      else if(response.success === false) toast.error(response.message);
-      else toast.error("Something went wrong! Please try again later.")
-
-      if(response.success) localStorage.setItem("email", email);
+      if (response.success === true) {
+        toast.success(response.message);
+        localStorage.removeItem("email");
+      }
+      else if (response.success === false) toast.error(response.message);
+      else toast.error("Something went wrong! Please try again later.");
 
       if (response.path) navigate(response.path);
-      setLoading(false);
+
+      setLoading(false)
     } catch (error) {
       console.log(error)
-      toast.error("Internal server error! Please try again later.")
+      toast.error("Internal server error! Please try again later.");
 
       setLoading(false)
     }
@@ -62,37 +77,25 @@ export const Login = () => {
             alt="Your Company"
           />
           <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
-            Log in to your account
+            Change the password
           </h2>
         </div>
 
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
           <form className="space-y-6" onSubmit={handleSubmit}>
-            <InputField id={"email"} value={email} onChange={setEmail} type={"email"} label={"Email"} />
-            <InputField id={"password"} value={password} onChange={setPassword} type={"password"} label={"Password"} />
+            <InputField id={"password"} value={password} onChange={setPassword} type={"password"} label={"Enter password :"} />
+            <InputField id={"checkPass"} value={checkPass} onChange={setCheckPass} type={"password"} label={"Re - enter password :"} />
+            <InputField id={"otp"} value={otp} onChange={setOtp} type={"text"} label={"Enter OTP :"} />
 
             <div>
               <button
                 type="submit"
                 className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
               >
-                Log in
+                Change password
               </button>
             </div>
           </form>
-
-          <p className="mt-5 mb-4 text-center text-sm text-gray-500 cursor-pointer">
-            <a onClick={() => { navigate("/forgot") }} className="text-sm mb-2 font-semibold text-indigo-600 hover:text-indigo-500">
-              Forgot password?
-            </a>
-          </p>
-
-          <p className="text-center text-sm text-gray-500">
-            Do not have an account?{' '}
-            <a onClick={() => { navigate("/signup") }} className="cursor-pointer font-semibold leading-6 text-indigo-600 hover:text-indigo-500">
-              Click here
-            </a>
-          </p>
         </div>
       </div>
     </>

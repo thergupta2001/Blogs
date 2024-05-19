@@ -7,6 +7,6 @@ const express_1 = __importDefault(require("express"));
 const forgotPass_1 = __importDefault(require("./forgotPass"));
 const changePass_1 = __importDefault(require("./changePass"));
 const userRouter = express_1.default.Router();
-userRouter.post("/forgotPass", forgotPass_1.default);
-userRouter.put("/changePass", changePass_1.default);
+userRouter.post("/forgot", forgotPass_1.default);
+userRouter.put("/change", changePass_1.default);
 exports.default = userRouter;

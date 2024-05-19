@@ -4,7 +4,7 @@ import changePassController from "./changePass";
 
 const userRouter = express.Router();
 
-userRouter.post("/forgotPass", forgotPassController);
-userRouter.put("/changePass", changePassController);
+userRouter.post("/forgot", forgotPassController);
+userRouter.put("/change", changePassController);
 
 export default userRouter;

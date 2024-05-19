@@ -33,7 +33,7 @@ export const Login = () => {
         body: {
           email: email,
           password: password
-        }
+        },
       });
 
       // console.log(response);

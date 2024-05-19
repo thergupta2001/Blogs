@@ -38,10 +38,6 @@ export const Signup = () => {
                 }
             });
 
-            // console.log(response);
-
-            // console.log(response.message);
-
             if(response.message) toast.success(response.message);
             else toast.error("Something went wrong");
 

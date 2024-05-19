@@ -24,6 +24,7 @@ interface FetchDataProps {
   body?: unknown;
   token?: string;
   params?: unknown;
+  credentials?: boolean;
 }
 
 export default async function fetchData(data: FetchDataProps) {
@@ -36,7 +37,7 @@ export default async function fetchData(data: FetchDataProps) {
       url: data.url,
       data: data.body,
       params: data.params,
-      // withCredentials: true
+      withCredentials: data.credentials
     });
     
     return response.data || "Something went wrong";

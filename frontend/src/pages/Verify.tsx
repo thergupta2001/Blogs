@@ -2,9 +2,8 @@ import { useEffect, useState } from "react";
 import { InputField } from "../components/InputField";
 import toast from "react-hot-toast";
 import Loading from "./Loading";
-// import fetchData, { Method } from "../helpers/fetchData";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import fetchData, { Method } from "../helpers/fetchData";
 
 // interface fetchResponse {
 //     message: string;
@@ -35,26 +34,24 @@ export const Verify = () => {
         try {
             setLoading(true);
 
-            const response = await axios({
-                method: "POST",
+            const response = await fetchData({
+                method: Method.POST,
                 url: import.meta.env.VITE_LINK + "/auth/verify",
-                data: {
+                body: {
                     email: email,
                     otp: otp
                 },
-                withCredentials: true
+                credentials: true
             })
 
-            // console.log(response);
-
-            if (response.data.success) {
-                toast.success(response.data.message);
+            if(response.success === true) {
+                toast.success(response.message);
                 localStorage.removeItem("email");
             }
-            else if (response.data.success === false) toast.error(response.data.message);
-            else toast.error("Something went wrong! Please try again later.")
+            else if(response.success === false) toast.error(response.message);
+            else toast.error("Something went wrong! Please try again later.");
 
-            if (response.data.path) navigate(response.data.path);
+            if(response.path) navigate(response.path);
 
             setLoading(false)
         } catch (error) {

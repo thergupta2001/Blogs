@@ -75,7 +75,6 @@ function userVerificationController(req, res) {
                     secure: true,
                     sameSite: 'none'
                 });
-                // console.log(res.cookies.accessToken);
                 return res.status(200).json({
                     message: "User verified successfully",
                     success: true,

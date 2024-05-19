@@ -92,8 +92,6 @@ export default async function userVerificationController(req: Request, res: Resp
                 sameSite: 'none'
             })
 
-            // console.log(res.cookies.accessToken);
-
             return res.status(200).json({
                 message: "User verified successfully",
                 success: true,

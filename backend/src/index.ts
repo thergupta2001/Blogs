@@ -34,6 +34,7 @@ app.use(express.urlencoded({ extended: false }));
 
 app.use(cors({
     origin: "https://blogs-iota-lake.vercel.app",
+    // origin: "http://localhost:5173",
     credentials: true
 }));
 

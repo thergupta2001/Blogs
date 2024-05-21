@@ -33,7 +33,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 app.use(cors({
-    origin: "https://blogs-git-main-thergupta2001s-projects.vercel.app/",
+    origin: "https://blogs-two-beryl.vercel.app/",
     credentials: true
 }));
 

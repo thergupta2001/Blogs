@@ -7,5 +7,5 @@ export const loadingAtom = atom({
 
 export const usernameAtom = atom({
     key: "usernameAtom",
-    default: "notallowed",
+    default: "",
 });

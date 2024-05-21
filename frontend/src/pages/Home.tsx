@@ -1,30 +1,28 @@
-import axios from "axios";
 import { useEffect } from "react";
-
-// axios.defaults.withCredentials = true;
+import fetchData, { Method } from "../helpers/fetchData";
+import { useRecoilState } from "recoil";
+import { usernameAtom } from "../store";
 
 export const Home = () => {
+  const [username, setUsername] = useRecoilState(usernameAtom);
+
   useEffect(() => {
-    // Function to fetch username from backend
-    const fetchUsername = async () => {
-      try {
-        const response = await axios({
-          method: "GET",
-          url: import.meta.env.VITE_LINK + "/getUsername",
-          withCredentials: true
-        })
+    async function fetchUsername() {
+      const response = await fetchData({
+        method: Method.GET,
+        url: import.meta.env.VITE_LINK + "/getUsername",
+        credentials: true
+      })
 
-        console.log("Response: " ,response)
-      } catch (error) {
-        console.error('Error fetching username:', error);
-      }
-    };
+      console.log(response);
 
-    // Call the function to fetch username when the component mounts
+      setUsername(response.data.username);
+    }
+
     fetchUsername();
-  }, []);
+  }, [setUsername]);
 
   return (
-    <div>Home</div>
+    <div>Home {username}</div>
   )
 }

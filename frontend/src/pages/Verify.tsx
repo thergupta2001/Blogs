@@ -16,12 +16,13 @@ export const Verify = () => {
     useEffect(() => {
         const timeout = setTimeout(() => {
             localStorage.removeItem('email');
-            alert("Your OTP has expired!")
+            alert("Your OTP has expired!");
+            navigate("/");
         }, 5 * 60 * 1000);
 
         // Cleanup function to clear the timeout if the component unmounts before the timeout
         return () => clearTimeout(timeout);
-    }, []);
+    }, [navigate]);
 
     async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
@@ -39,14 +40,14 @@ export const Verify = () => {
                 credentials: true
             })
 
-            if(response.success === true) {
+            if (response.success === true) {
                 toast.success(response.message);
                 localStorage.removeItem("email");
             }
-            else if(response.success === false) toast.error(response.message);
+            else if (response.success === false) toast.error(response.message);
             else toast.error("Something went wrong! Please try again later.");
 
-            if(response.path) navigate(response.path);
+            if (response.path) navigate(response.path);
 
             setLoading(false)
         } catch (error) {

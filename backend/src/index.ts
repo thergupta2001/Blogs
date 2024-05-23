@@ -50,18 +50,14 @@ app.use("/auth", authRouter);
 app.use("/user", userRouter);
 
 app.get('/getUsername', (req: Request, res: Response) => {
-    const token = req.cookies.accessToken
-
-    if (!token) {
-        console.log("why the hell is token empty!!");
-
-        return res.status(401).json({
-            message: 'No token found, authorization denied',
-            success: false,
-        });
-    }
-
     try {
+        const token = req.cookies.accessToken;
+
+        if (!token) {
+            console.log("why the hell is token empty!!");
+            throw new Error('No token found');
+        }
+
         const secret = process.env.JWT_SECRET!;
         const decoded = jwt.verify(token, secret) as DecodedToken;
 
@@ -77,6 +73,7 @@ app.get('/getUsername', (req: Request, res: Response) => {
         return res.status(401).json({
             message: 'Token is not valid',
             success: false,
+            path: null
         });
     }
 });

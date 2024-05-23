@@ -51,14 +51,15 @@ app.use("/auth", authRouter);
 app.use("/user", userRouter);
 
 app.get('/getUsername', (req: Request, res: Response) => {
+    
+    const token = req.cookies.accessToken;
+
+    if (!token) {
+        console.log("why the hell is token empty!!");
+        throw new Error('No token found');
+    }
+
     try {
-        const token = req.cookies.accessToken;
-
-        if (!token) {
-            console.log("why the hell is token empty!!");
-            throw new Error('No token found');
-        }
-
         const secret = process.env.JWT_SECRET!;
         const decoded = jwt.verify(token, secret) as DecodedToken;
 

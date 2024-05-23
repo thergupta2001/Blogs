@@ -34,7 +34,8 @@ app.use(express.urlencoded({ extended: false }));
 
 app.use(cors({
     origin: ["https://blogs-two-beryl.vercel.app"],
-    credentials: true
+    credentials: true,
+    optionsSuccessStatus: 200
 }));
 
 app.use(cookieParser());

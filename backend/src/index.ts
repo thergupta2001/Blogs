@@ -33,7 +33,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 app.use(cors({
-    origin: "https://blogs-two-beryl.vercel.app",
+    origin: ["https://blogs-two-beryl.vercel.app"],
     credentials: true,
     optionsSuccessStatus: 200
 }));
@@ -56,7 +56,11 @@ app.get('/getUsername', (req: Request, res: Response) => {
 
     if (!token) {
         console.log("why the hell is token empty!!");
-        throw new Error('No token found');
+        return res.status(404).json({
+            message: "Unauthorized user",
+            success: false,
+            path: null
+        })
     }
 
     try {

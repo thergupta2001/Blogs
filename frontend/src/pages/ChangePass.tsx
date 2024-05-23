@@ -5,8 +5,11 @@ import toast from "react-hot-toast";
 import fetchData, { Method } from "../helpers/fetchData";
 import { fetchResponse } from "./Login";
 import Loading from "./Loading";
+import useAuth from "../hooks/useAuth";
 
 export const ChangePass = () => {
+  useAuth(true);
+
   const navigate = useNavigate();
 
   const email: string | null = localStorage.getItem("email");

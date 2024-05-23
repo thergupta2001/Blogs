@@ -7,6 +7,7 @@ import { Verify } from "./pages/Verify.tsx"
 import { Home } from "./pages/Home.tsx"
 import { ForgotPass } from "./pages/ForgotPass.tsx"
 import { ChangePass } from "./pages/ChangePass.tsx"
+import { Profile } from "./pages/Profile.tsx"
 
 function App() {
 
@@ -20,6 +21,7 @@ function App() {
         <Route path="/home" element={<Home />} />
         <Route path="/forgot" element={<ForgotPass />} />
         <Route path="/change" element={<ChangePass />} />
+        <Route path="/profile" element={<Profile />} />
         <Route path="/" element={<Login />} />
       </Routes>
     </>

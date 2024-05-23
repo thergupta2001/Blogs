@@ -4,6 +4,7 @@ import { useState } from "react";
 import fetchData, { Method } from "../helpers/fetchData";
 import Loading from "./Loading";
 import toast from "react-hot-toast";
+import useAuth from "../hooks/useAuth";
 
 export interface fetchResponse {
   message: string;
@@ -12,6 +13,8 @@ export interface fetchResponse {
 }
 
 export const Login = () => {
+  useAuth(true);
+
   const navigate = useNavigate();
 
   const [email, setEmail] = useState<string>("");

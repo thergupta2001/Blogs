@@ -5,8 +5,11 @@ import Loading from "./Loading";
 import { fetchResponse } from "./Login";
 import fetchData, { Method } from "../helpers/fetchData";
 import { useNavigate } from "react-router-dom";
+import useAuth from "../hooks/useAuth";
 
 export const ForgotPass = () => {
+    useAuth(true);
+
     const navigate = useNavigate();
 
     const [email, setEmail] = useState<string>("");

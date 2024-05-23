@@ -7,5 +7,10 @@ export const loadingAtom = atom({
 
 export const usernameAtom = atom({
     key: "usernameAtom",
-    default: "",
+    default: null,
 });
+
+export const emailAtom = atom({
+    key: "emailAtom",
+    default: null
+})

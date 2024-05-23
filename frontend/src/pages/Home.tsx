@@ -1,28 +1,14 @@
-import { useEffect } from "react";
-import fetchData, { Method } from "../helpers/fetchData";
-import { useRecoilState } from "recoil";
-import { usernameAtom } from "../store";
+import { useRecoilValue } from "recoil";
+import { emailAtom, usernameAtom } from "../store";
+import useAuth from "../hooks/useAuth";
 
 export const Home = () => {
-  const [username, setUsername] = useRecoilState(usernameAtom);
+  useAuth();
 
-  useEffect(() => {
-    async function fetchUsername() {
-      const response = await fetchData({
-        method: Method.GET,
-        url: import.meta.env.VITE_LINK + "/getUsername",
-        credentials: true
-      })
-
-      console.log(response);
-
-      setUsername(response.data.username);
-    }
-
-    fetchUsername();
-  }, [setUsername]);
+  const email = useRecoilValue(emailAtom);
+  const username = useRecoilValue(usernameAtom);
 
   return (
-    <div>Home {username}</div>
+    <div>Home {username} {email}</div>
   )
 }

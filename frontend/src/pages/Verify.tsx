@@ -5,8 +5,11 @@ import Loading from "./Loading";
 import { useNavigate } from "react-router-dom";
 import fetchData, { Method } from "../helpers/fetchData";
 import { fetchResponse } from "./Login";
+import useAuth from "../hooks/useAuth";
 
 export const Verify = () => {
+    useAuth(true);
+    
     const navigate = useNavigate();
 
     const email: string | null = localStorage.getItem("email");

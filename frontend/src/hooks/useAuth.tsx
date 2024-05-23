@@ -1,0 +1,43 @@
+import { useEffect } from "react";
+import { useSetRecoilState } from "recoil";
+import { emailAtom, usernameAtom } from "../store";
+import fetchData, { Method } from "../helpers/fetchData";
+import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
+
+export default function useAuth(inAuth: boolean = false) {
+    const navigate = useNavigate();
+
+    const setUsername = useSetRecoilState(usernameAtom);
+    const setEmail = useSetRecoilState(emailAtom);
+
+    useEffect(() => {
+        async function auth() {
+            try {
+                const responses = await fetchData({
+                    method: Method.GET,
+                    url: import.meta.env.VITE_LINK + "/getUsername",
+                    credentials: true
+                })
+
+                console.log(responses);
+
+                setUsername(responses.data.username);
+                setEmail(responses.data.email);
+
+                if (inAuth) navigate("/home", { replace: true });
+            } catch (error) {
+                console.error(error);
+
+                setUsername(null);
+                setEmail(null);
+
+                toast.error("Unauthorized user!")
+
+                if(!inAuth) navigate("/", {replace: true});
+            }
+        }
+
+        auth();
+    }, [navigate, setEmail, setUsername, inAuth])
+}

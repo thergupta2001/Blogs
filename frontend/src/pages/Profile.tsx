@@ -1,7 +1,7 @@
-import useAuth from "../hooks/useAuth"
+// import useAuth from "../hooks/useAuth"
 
 export const Profile = () => {
-    useAuth();
+    // useAuth();
 
   return (
     <div>Profile</div>

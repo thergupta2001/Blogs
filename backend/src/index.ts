@@ -33,7 +33,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 app.use(cors({
-    origin: ["https://blogs-psi-puce.vercel.app/"],
+    origin: ["https://blogs-psi-puce.vercel.app"],
     credentials: true,
 }));
 

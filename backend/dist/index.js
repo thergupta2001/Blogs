@@ -26,13 +26,9 @@ const limiter = (0, express_rate_limit_1.default)({
 // app.use(limiter);
 app.use(express_1.default.json());
 app.use(express_1.default.urlencoded({ extended: false }));
-// app.use(cors({
-//     origin: ["https://blogs-two-beryl.vercel.app"],
-//     credentials: true
-// }));
 app.use((0, cors_1.default)({
     origin: ["http://localhost:5173"],
-    credentials: true
+    credentials: true,
 }));
 app.use((0, cookie_parser_1.default)());
 node_cron_1.default.schedule('* * * * *', deleteOtp_1.deleteExpiredOTPs);
@@ -43,12 +39,16 @@ app.get("/", (req, res) => {
 app.use("/auth", router_1.default);
 app.use("/user", router_2.default);
 app.get('/getUsername', (req, res) => {
+    const token = req.cookies.accessToken;
+    if (!token) {
+        console.log("why the hell is token empty!!");
+        return res.status(404).json({
+            message: "Unauthorized user",
+            success: false,
+            path: null
+        });
+    }
     try {
-        const token = req.cookies.accessToken;
-        if (!token) {
-            console.log("why the hell is token empty!!");
-            throw new Error('No token found');
-        }
         const secret = process.env.JWT_SECRET;
         const decoded = jsonwebtoken_1.default.verify(token, secret);
         return res.status(200).json({

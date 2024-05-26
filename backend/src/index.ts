@@ -21,6 +21,23 @@ const app = express();
 
 const prisma = new PrismaClient();
 
+
+const allowedOrigins = [
+    'https://blogs-psi-puce.vercel.app', // Your deployed frontend URL
+    'http://localhost:5173' // Local development URL
+];
+
+app.use(cors({
+    origin: function (origin, callback) {
+        if (!origin || allowedOrigins.includes(origin)) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
+    credentials: true
+}));
+
 const limiter = rateLimit({
     windowMs: 15 * 60 * 1000,
     max: 1000,
@@ -31,11 +48,6 @@ const limiter = rateLimit({
 // app.use(limiter);
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-
-app.use(cors({
-    origin: ["https://blogs-psi-puce.vercel.app"],
-    credentials: true,
-}));
 
 app.use(cookieParser());
 
@@ -50,7 +62,7 @@ app.use("/auth", authRouter);
 app.use("/user", userRouter);
 
 app.get('/getUsername', (req: Request, res: Response) => {
-    
+
     const token = req.cookies.accessToken;
 
     if (!token) {

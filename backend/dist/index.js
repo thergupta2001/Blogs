@@ -17,6 +17,21 @@ const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 dotenv_1.default.config();
 const app = (0, express_1.default)();
 const prisma = new client_1.PrismaClient();
+const allowedOrigins = [
+    'https://blogs-psi-puce.vercel.app', // Your deployed frontend URL
+    'http://localhost:5173' // Local development URL
+];
+app.use((0, cors_1.default)({
+    origin: function (origin, callback) {
+        if (!origin || allowedOrigins.includes(origin)) {
+            callback(null, true);
+        }
+        else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
+    credentials: true
+}));
 const limiter = (0, express_rate_limit_1.default)({
     windowMs: 15 * 60 * 1000,
     max: 1000,
@@ -26,10 +41,6 @@ const limiter = (0, express_rate_limit_1.default)({
 // app.use(limiter);
 app.use(express_1.default.json());
 app.use(express_1.default.urlencoded({ extended: false }));
-app.use((0, cors_1.default)({
-    origin: ["http://localhost:5173"],
-    credentials: true,
-}));
 app.use((0, cookie_parser_1.default)());
 node_cron_1.default.schedule('* * * * *', deleteOtp_1.deleteExpiredOTPs);
 app.get("/", (req, res) => {

@@ -3,7 +3,6 @@ import { useSetRecoilState } from "recoil";
 import { emailAtom, usernameAtom } from "../store";
 import fetchData, { Method } from "../helpers/fetchData";
 import { useNavigate } from "react-router-dom";
-import toast from "react-hot-toast";
 
 export default function useAuth(inAuth: boolean = false) {
     const navigate = useNavigate();
@@ -31,8 +30,6 @@ export default function useAuth(inAuth: boolean = false) {
 
                 setUsername(null);
                 setEmail(null);
-
-                toast.error("Unauthorized user!")
 
                 if(!inAuth) navigate("/", {replace: true});
             }

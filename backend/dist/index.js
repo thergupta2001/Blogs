@@ -14,12 +14,13 @@ const node_cron_1 = __importDefault(require("node-cron"));
 const deleteOtp_1 = require("./auth/deleteOtp");
 const router_2 = __importDefault(require("./user/router"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
+const compression_1 = __importDefault(require("compression"));
 dotenv_1.default.config();
 const app = (0, express_1.default)();
 const prisma = new client_1.PrismaClient();
 const allowedOrigins = [
-    'https://blogs-psi-puce.vercel.app', // Your deployed frontend URL
-    'http://localhost:5173' // Local development URL
+    'https://blogs-psi-puce.vercel.app',
+    'http://localhost:5173'
 ];
 app.use((0, cors_1.default)({
     origin: function (origin, callback) {
@@ -30,7 +31,8 @@ app.use((0, cors_1.default)({
             callback(new Error('Not allowed by CORS'));
         }
     },
-    credentials: true
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE"]
 }));
 const limiter = (0, express_rate_limit_1.default)({
     windowMs: 15 * 60 * 1000,
@@ -41,6 +43,7 @@ const limiter = (0, express_rate_limit_1.default)({
 // app.use(limiter);
 app.use(express_1.default.json());
 app.use(express_1.default.urlencoded({ extended: false }));
+app.use((0, compression_1.default)());
 app.use((0, cookie_parser_1.default)());
 node_cron_1.default.schedule('* * * * *', deleteOtp_1.deleteExpiredOTPs);
 app.get("/", (req, res) => {
@@ -52,7 +55,7 @@ app.use("/user", router_2.default);
 app.get('/getUsername', (req, res) => {
     const token = req.cookies.accessToken;
     if (!token) {
-        console.log("why the hell is token empty!!");
+        // console.log("why the hell is token empty!!");
         return res.status(404).json({
             message: "Unauthorized user",
             success: false,

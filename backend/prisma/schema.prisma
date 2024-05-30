@@ -15,15 +15,25 @@ datasource db {
 
 model User {
   id         Int     @id @default(autoincrement())
-  username   String  
+  username   String
   email      String  @unique
   password   String
   isVerified Boolean @default(false)
+  posts      Post[]
 }
 
 model Otps {
-  id          Int       @id @default(autoincrement())
-  email       String
-  otp         String
-  expiration  String
+  id         Int    @id @default(autoincrement())
+  email      String
+  otp        String
+  expiration String
+}
+
+model Post {
+  id       Int    @id @default(autoincrement())
+  title    String
+  content  String
+  image    String
+  author   User   @relation(fields: [authorId], references: [id])
+  authorId Int
 }

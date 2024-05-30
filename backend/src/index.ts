@@ -9,6 +9,7 @@ import cron from "node-cron";
 import { deleteExpiredOTPs } from "./auth/deleteOtp";
 import userRouter from "./user/router";
 import jwt, { JwtPayload, decode } from "jsonwebtoken";
+import compression from "compression";
 
 dotenv.config();
 
@@ -23,8 +24,8 @@ const prisma = new PrismaClient();
 
 
 const allowedOrigins = [
-    'https://blogs-psi-puce.vercel.app', // Your deployed frontend URL
-    'http://localhost:5173' // Local development URL
+    'https://blogs-psi-puce.vercel.app',
+    'http://localhost:5173'
 ];
 
 app.use(cors({
@@ -36,7 +37,7 @@ app.use(cors({
         }
     },
     credentials: true,
-    methods: ["GET", "POST"]
+    methods: ["GET", "POST", "PUT", "DELETE"]
 }));
 
 const limiter = rateLimit({
@@ -49,6 +50,7 @@ const limiter = rateLimit({
 // app.use(limiter);
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+app.use(compression());
 
 app.use(cookieParser());
 
@@ -67,7 +69,7 @@ app.get('/getUsername', (req: Request, res: Response) => {
     const token = req.cookies.accessToken;
 
     if (!token) {
-        console.log("why the hell is token empty!!");
+        // console.log("why the hell is token empty!!");
         return res.status(404).json({
             message: "Unauthorized user",
             success: false,

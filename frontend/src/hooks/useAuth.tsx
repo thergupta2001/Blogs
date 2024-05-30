@@ -19,14 +19,14 @@ export default function useAuth(inAuth: boolean = false) {
                     credentials: true
                 })
 
-                console.log(responses);
+                // console.log(responses);
 
                 setUsername(responses.data.username);
                 setEmail(responses.data.email);
 
                 if (inAuth) navigate("/home", { replace: true });
             } catch (error) {
-                console.error(error);
+                // console.error(error);
 
                 setUsername(null);
                 setEmail(null);

@@ -22,7 +22,6 @@ const app = express();
 
 const prisma = new PrismaClient();
 
-
 const allowedOrigins = [
     'https://blogs-one-tawny.vercel.app',
     'http://localhost:5173'
@@ -44,6 +43,14 @@ const limiter = rateLimit({
 // app.use(limiter);
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+app.use(function (req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header(
+        "Access-Control-Allow-Headers",
+        "Origin, X-Requested-With, Content-Type, Accept"
+    );
+    next();
+});
 // app.use(compression());
 
 app.use(cookieParser());

@@ -25,7 +25,7 @@ app.use(cors({
     origin: "https://blogs-one-tawny.vercel.app",
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE"],
-    allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With", "Accept"]
+    // allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With", "Accept"]
 }));
 
 const limiter = rateLimit({

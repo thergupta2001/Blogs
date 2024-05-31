@@ -24,7 +24,7 @@ const prisma = new PrismaClient();
 
 
 const allowedOrigins = [
-    'https://blogs-psi-puce.vercel.app',
+    'https://blogs-kuwn.vercel.app',
     'http://localhost:5173'
 ];
 

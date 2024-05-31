@@ -19,7 +19,7 @@ dotenv_1.default.config();
 const app = (0, express_1.default)();
 const prisma = new client_1.PrismaClient();
 const allowedOrigins = [
-    'https://blogs-psi-puce.vercel.app',
+    'https://blogs-kuwn.vercel.app/',
     'http://localhost:5173'
 ];
 app.use((0, cors_1.default)({

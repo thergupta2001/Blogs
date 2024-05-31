@@ -9,7 +9,7 @@ import cron from "node-cron";
 import { deleteExpiredOTPs } from "./auth/deleteOtp";
 import userRouter from "./user/router";
 import jwt, { JwtPayload, decode } from "jsonwebtoken";
-import compression from "compression";
+// import compression from "compression";
 
 dotenv.config();
 
@@ -50,7 +50,7 @@ const limiter = rateLimit({
 // app.use(limiter);
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-app.use(compression());
+// app.use(compression());
 
 app.use(cookieParser());
 

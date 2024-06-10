@@ -23,7 +23,7 @@ const allowedOrigins = [
 ];
 
 app.use(cors({
-    origin: "http://localhost:5173",
+    origin: "https://blogs-one-tawny.vercel.app",
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE"],
 }));

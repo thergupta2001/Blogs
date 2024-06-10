@@ -15,7 +15,7 @@ export default function useAuth(inAuth: boolean = false) {
             try {
                 const responses = await fetchData({
                     method: Method.GET,
-                    url: import.meta.env.VITE_LINK + "/getUsername",
+                    url: "/getUsername",
                     credentials: true
                 })
 

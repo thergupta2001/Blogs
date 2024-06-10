@@ -35,7 +35,7 @@ export const Verify = () => {
 
             const response: fetchResponse = await fetchData({
                 method: Method.POST,
-                url: import.meta.env.VITE_LINK + "/auth/verify",
+                url: "/auth/verify",
                 body: {
                     email: email,
                     otp: otp

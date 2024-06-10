@@ -2,9 +2,10 @@ import { FC, useState, ChangeEvent } from "react";
 import { useRecoilValue } from "recoil";
 import { emailAtom, usernameAtom } from "../store";
 import useAuth from "../hooks/useAuth";
-import axios, { AxiosResponse } from "axios";
+import fetchData, { Method } from "../helpers/fetchData";
+// import axios, { AxiosResponse } from "axios";
 
-interface HomeProps {}
+interface HomeProps { }
 
 export const Home: FC<HomeProps> = () => {
   useAuth();
@@ -12,32 +13,35 @@ export const Home: FC<HomeProps> = () => {
   const email = useRecoilValue(emailAtom);
   const username = useRecoilValue(usernameAtom);
 
-  const [selectedImage, setSelectedImage] = useState<File | null>(null);
+  const [selectedImage, setSelectedImage] = useState<string>("");
 
-  const handleImageUpload = (event: ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files && event.target.files.length > 0) {
-      const imageFile = event.target.files[0];
-      setSelectedImage(imageFile);
+  const handleImageUpload = (e: ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      const file = e.target.files[0];
+
+      setFileToBase(file);
+      console.log(file);
     }
   };
 
-  const handleSubmit = async () => {
-    if (!selectedImage) {
-      console.error("No image selected");
-      return;
+  const setFileToBase = (file: File) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onloadend = async() => {
+      setSelectedImage(reader.result as string);
     }
+  }
 
-    try {
-      const formData = new FormData();
-      formData.append("file", selectedImage);
-      formData.append("upload_preset", import.meta.env.PRESET_NAME as string);
-      formData.append("cloud_name", import.meta.env.CLOUD_NAME as string);
+  const handleSubmit = async () => {
+    if (selectedImage) {
+      const response = await fetchData({
+        method: Method.POST,
+        url: "/user/upload",
+        body: { image : selectedImage },
+        credentials: true
+      });
 
-      const response: AxiosResponse = await axios.post(import.meta.env.CLOUDINARY as string, formData);
-
-      console.log(response);
-    } catch (error) {
-      console.error("Error uploading image:", error);
+      console.log("Upload response:", response);
     }
   };
 

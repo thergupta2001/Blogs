@@ -34,7 +34,7 @@ export default async function fetchData(data: FetchDataProps) {
       headers: {
         Authorization: data.token,
       },
-      url: data.url,
+      url: import.meta.env.VITE_LINK + data.url,
       data: data.body,
       params: data.params,
       withCredentials: data.credentials

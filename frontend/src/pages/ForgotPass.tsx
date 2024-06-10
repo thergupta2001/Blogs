@@ -23,7 +23,7 @@ export const ForgotPass = () => {
 
             const response: fetchResponse = await fetchData({
                 method: Method.POST,
-                url: import.meta.env.VITE_LINK + "/user/forgot",
+                url: "/user/forgot",
                 body: {
                     email: email,
                 },

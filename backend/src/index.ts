@@ -9,6 +9,7 @@ import cron from "node-cron";
 import { deleteExpiredOTPs } from "./auth/deleteOtp";
 import userRouter from "./user/router";
 import getUser from "./getUser";
+import expressFileUpload from "express-fileupload";
 
 dotenv.config();
 
@@ -22,10 +23,9 @@ const allowedOrigins = [
 ];
 
 app.use(cors({
-    origin: "https://blogs-one-tawny.vercel.app",
+    origin: "http://localhost:5173",
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE"],
-    // allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With", "Accept"]
 }));
 
 const limiter = rateLimit({
@@ -36,8 +36,13 @@ const limiter = rateLimit({
 })
 
 // app.use(limiter);
-app.use(express.json());
+app.use(express.json({
+    limit: '10mb'
+}));
 app.use(express.urlencoded({ extended: false }));
+app.use(expressFileUpload({
+    useTempFiles: true
+}));
 
 app.use(cookieParser());
 

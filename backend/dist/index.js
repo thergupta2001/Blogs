@@ -14,6 +14,7 @@ const node_cron_1 = __importDefault(require("node-cron"));
 const deleteOtp_1 = require("./auth/deleteOtp");
 const router_2 = __importDefault(require("./user/router"));
 const getUser_1 = __importDefault(require("./getUser"));
+const express_fileupload_1 = __importDefault(require("express-fileupload"));
 dotenv_1.default.config();
 const app = (0, express_1.default)();
 const prisma = new client_1.PrismaClient();
@@ -22,10 +23,9 @@ const allowedOrigins = [
     'http://localhost:5173'
 ];
 app.use((0, cors_1.default)({
-    origin: "https://blogs-one-tawny.vercel.app",
+    origin: "http://localhost:5173",
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE"],
-    // allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With", "Accept"]
 }));
 const limiter = (0, express_rate_limit_1.default)({
     windowMs: 15 * 60 * 1000,
@@ -34,8 +34,13 @@ const limiter = (0, express_rate_limit_1.default)({
     statusCode: 429
 });
 // app.use(limiter);
-app.use(express_1.default.json());
+app.use(express_1.default.json({
+    limit: '10mb'
+}));
 app.use(express_1.default.urlencoded({ extended: false }));
+app.use((0, express_fileupload_1.default)({
+    useTempFiles: true
+}));
 app.use((0, cookie_parser_1.default)());
 node_cron_1.default.schedule('* * * * *', deleteOtp_1.deleteExpiredOTPs);
 app.get("/", (req, res) => {

@@ -30,7 +30,7 @@ export const Signup = () => {
 
             const response: fetchResponse = await fetchData({
                 method: Method.POST,
-                url: import.meta.env.VITE_LINK + "/auth/signup",
+                url: "/auth/signup",
                 body: {
                     username: username,
                     email: email,

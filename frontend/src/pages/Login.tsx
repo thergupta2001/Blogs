@@ -30,7 +30,7 @@ export const Login = () => {
 
       const response: fetchResponse = await fetchData({
         method: Method.POST,
-        url: import.meta.env.VITE_LINK + "/auth/login",
+        url: "/auth/login",
         body: {
           email: email,
           password: password

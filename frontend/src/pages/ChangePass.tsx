@@ -42,7 +42,7 @@ export const ChangePass = () => {
 
       const response: fetchResponse = await fetchData({
         method: Method.PUT,
-        url: import.meta.env.VITE_LINK + "/user/change",
+        url: "/user/change",
         body: {
           email: email,
           otp: otp,
